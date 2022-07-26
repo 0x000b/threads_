@@ -1,10 +1,13 @@
 <h1 align="center">Um estudo sobre threads e java</h1>
 
+![capa](./images/Capa.png)
+
 <p>Este projeto têm como objetivo espalhar meu conhecimento sobre threads usando Java e um pouco de C, tratarei de citar e explicar sobre conceitos computacionais relacionados, tais como concorrencia, região critica e técnicas de exclusão mutua. Estes conceitos são dificeis de entender inicialmente, pois precisa-se de uma base de entendimento de sistemas operacionais, mas com este breve estudo, pretendo atiçar sua curiosidade e indicar novos estudos.</p>
 
 
 
 <div align="center">
+<br></br>
 <h2>Sumário</h2>
 
 ![Quem sou eu?](#quemsoueu)
@@ -27,6 +30,8 @@
 </div>
 
 <div id="escalonadores">
+
+<br></br>
 <h2 align="center">Um breve conceito sobre escalonadores</h2>
 
 <p>
@@ -46,6 +51,7 @@ De nada adianta falarmos de threads e seus pontos principais sem antes sabermos 
 </div>
 
 <div align="center" id="threads">
+<br></br>
 <h2>Threads</h2>
 
 <p align="left">Dado o grande avanço técnologico e a evolução de sistemas, tornou-se desejavel ter softwares que realizam mais ações ao mesmo tempo, de uma forma mais eficiente, trouxe a ideia de usar um processo dentro de outro, isto é, como se eles fossem processos separados, mas que compartilham o mesmo espaço de endereçamento.</p>
@@ -143,6 +149,7 @@ Condição de disputa nada mais é que a ocorrência de dois ou mais processos q
 
 </div>
 
+
 Neste exemplo há o uso de uma impressora, com processos colocando arquivos para imprimir, os dois têm a mesma função, colocar o arquivo em memória utilizando de duas variáveis, **in e out**, in indicará aonde o arquivo deverá ser colocado e out o arquivo que está saindo, imagine agora que os dois processos estão utilizando das mesmas variaveis em condição de disputa, como vimos antes, o escalonador poderá parar um deles e indicar o outro para executar, porém, há chances de ocorrer que o processo anterior estava pronto para colocar um arquivo na memoria, mas não conseguiu, o outro processo entrará em execução e como a variável IN ainda está apontando para o mesmo lugar, colocará neste, e chamará o processo anterior, oque ocorre agora é que o processo anterior irá sobrescrever oque o outro colocou, causando perca de arquivos.
 
 Dentro deste conceito, há outro, **Regiões Críticas**.
@@ -150,6 +157,7 @@ Dentro deste conceito, há outro, **Regiões Críticas**.
 </div>
 
 <div>
+<br></br>
 <h3 align="center">Região Crítica</h3>
 
 Como explicado anteriormente, condição de disputa ocorre quando dois processos fazem a mesma função tendo as mesmas variáveis, regiões criticas são justamente estas partes de código que, **utilizam das mesmas varíaveis globais, podendo modifica-las ou lê-las**, ou seja, todos os problemas ocorridos até agora, acontece justamente por conta de que os processos estão modificando e lendo os dados de outros sem quaisquer regras, já que estes dados são globais, logo, disponíveis a todos.
@@ -178,9 +186,293 @@ Todas as threads estarão neste mesmo local, trabalhando paralelamente e concorr
 
 
 <div>
+<br></br>
+
 <h2 align="center">Resolvendo os problemas de threads</h2>
 
+Há diversas formas de resolver os problemas causados pelo uso de threads, feitos por autores diferentes, com formas high level(mais próximo da nossa linguagem) e low level(mais perto da linguagem de hardware), estas consistem na ideia de previnir com que dois processos/threads entrem na **região crítica** ao mesmo tempo, algumas tendo mais eficácia e outras menos...são chamadas de **técnicas de exclusão mutua**(sugiro pesquisar sobre as diversas técnicas existentes).
 
+<br></br>
+
+<h3 align="center">Condições para promover uma boa solução exclusão mútua</h3>
+
+    1. Dois ou mais processos ou threads jamais podem estar simultaneamente dentro de suas regiões críticas;
+    2. Nenhuma suposição pode ser feita a respeito de velocidades ou números de CPUs;
+    3. Nenhum processo ou thread fora de sua região critica pode bloquear qualquer processo;
+    4. Nenhum processo ou thread deve ser obrigado a esperar eternamente para entrar em sua região crítica.
+
+
+<br></br>
+<h3 align="center">Teoria do mutexes</h3>
+
+Mutex é uma das técnicas de exclusão mutua, que consiste na ideia de termos uma variável que terá a função de permitir que alguém entre ou não naquela função/parte do código. Considerada uma forma mais usual de resolver, os mutexes trabalham não só como uma variável, pois se não, apenas criariamos uma variável qualquer em escopo global e usariamos..mas os mutexes trabalham realizando diversas mudanças em **assembly**, linguagem low level.
+
+<div align="center">
+
+![regiaocritica](./images/regioescriticas.jpg)
+
+</div>
+
+<br></br>
+
+<h3 align="center">Mutex na prática(linguagem C)</h3>
+
+Para quem já conhece C e quer entender o funcionamento de uma forma mais completa dos mutexes, deixarei dois códigos abaixo em C para você testar.
+
+!Os códigos e arquivos .c estão também no github na pasta **threads_in_C**.
+
+
+**Windows**
+
+```
+
+///Produtor Consumidor Mutexes
+#include <stdio.h>
+#include <windows.h>
+#include <process.h>
+#define TF 10000
+
+int i = -1;
+int vet[TF];
+
+HANDLE mutex;
+
+void produtor(void) {
+    int pos, item;
+    while(1) {
+      WaitForSingleObject(mutex,INFINITE); // Uso do mutex para análisar se pode entrar ou não
+      if (i<TF) {
+        i++;
+        pos=vet[i]=i;
+        item=vet[i];
+        ReleaseMutex(mutex); // Saída do mutex, abrindo o caminho para outro processo entrar
+        printf("\nProd: posicao %05d - valor %05d",pos,item);
+      }
+      else {
+        ReleaseMutex(mutex);
+        SwitchToThread(); // Sai da região se não tiver nada para fazer(está no else);
+      }
+    }
+}
+
+void consumidor(void) {
+    int pos, item;
+    while(1) {
+      WaitForSingleObject(mutex,INFINITE);
+      if (i>-1) {
+        item=vet[i];
+        pos=i;
+        vet[i]=-1;
+        i--;
+        ReleaseMutex(mutex);
+        printf("\nCons: posicao %05d - valor %05d",pos,item);
+      }
+      else {
+        ReleaseMutex(mutex);
+        SwitchToThread();
+      }
+    }
+}
+
+void main(void)
+{
+    mutex=CreateMutex(NULL,FALSE,NULL);
+    _beginthread(produtor,NULL,NULL); // Cria a thread para a função produtor
+    _beginthread(consumidor,NULL,NULL); // Cria a thread para a função consumidor
+    getch();
+}
+
+
+```
+
+**Linux**
+
+```
+
+///Produtor Consumidor utilizando Mutexes
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+#define TF 10000
+#define MAXTHREADS 2
+
+int i = -1;
+int vet[TF];
+
+pthread_mutex_t mutex;
+pthread_t t[MAXTHREADS];
+
+void* produtor(void *arg) {
+    int pos, item;
+    while(1) {
+      pthread_mutex_lock(&mutex); // primeiro analisa se está aberto e entra(se disponivel), trancando o mutex
+      if (i<TF) {
+        i++;
+        pos=vet[i]=i;
+        item=vet[i];
+        pthread_mutex_unlock(&mutex); // sai da região crítica, abrindo o mutex
+        printf("\nProd: posicao %05d - valor %05d",pos,item);
+      }
+      else {
+        pthread_mutex_unlock(&mutex);
+	sched_yield();
+      }
+    }
+}
+
+void* consumidor(void *arg) {
+    int pos, item;
+    while(1) {
+      pthread_mutex_lock(&mutex); // primeiro analisa se está aberto e entra(se disponivel), trancando o mutex
+      if (i>-1) {
+        item=vet[i];
+        pos=i;
+        vet[i]=0;
+        i--;
+        pthread_mutex_unlock(&mutex); // sai da região crítica, abrindo o mutex
+        printf("\nCons: posicao %05d - valor %05d",pos,item);
+      }
+      else {
+        pthread_mutex_unlock(&mutex);
+	sched_yield();
+      }	
+    }
+}
+
+void main(void)
+{
+    pthread_mutex_init(&mutex, NULL); // inicia a varíavel mutex
+    pthread_create(&t[0], NULL, &produtor, NULL); // cria a thread
+    pthread_create(&t[1], NULL, &consumidor, NULL); // cria a thread
+    pthread_join(t[0], NULL); // inicia a thread
+    pthread_join(t[1], NULL); // inicia a thread
+    pthread_mutex_destroy(&mutex); // o mutex é destruído no momento em que todas as threads terminarem
+}
+
+```
+
+</div>
+
+<br></br>
+
+<div>
+<h2 align="center">Utilizando mutex para resolver threads em Java</h2>
+
+Abaixo veremos a principal forma de resolvermos nossos problemas com threads, primeiro demonstrarem algumas das formas que teremos, e depois a forma mais usual, geralmente mais adaptada ao uso em produção.
+
+<br></br>
+<h3 align="center">Usando synchronized</h3>
+
+Synchronized é a forma mais convencional de nos proteger dos males do multithreading em java, ela é bem simples, apenas adicione ela na parte do seu código onde exista **região crítica**.
+
+<br></br>
+<h3 align="center">Synchronized em funções</h3>
+
+Veremos agora o uso do mutex através de uma função, que, assim como dito, irá deixar a função bloqueada a partir do momento em que uma thread estiver dentro, logo, inibindo o erro de concorrencia. Usaremos para este exemplo o código feito no início do assunto e adicionaremos uma nova varíavel, i.
+
+O objetivo da variável **i** será apenas para deixar o entendimento melhor, já que, apenas com o nome das threads, não irá de forma visual demonstrar a resolução, pois o escalonador pode troca-los..
+
+``` 
+
+public class ThreadBasica implements Runnable{
+    private String nome;
+    private int i=0;
+
+
+    @Override
+    public void run() {
+        i++;
+        nome = Thread.currentThread().getName();
+        System.out.println(nome+": "+ i);
+    }
+    
+}
+
+```
+
+Rodando o código acima temos como saída:
+
+```
+
+Thread-1: 2
+Thread-2: 3
+Thread-1: 2
+
+```
+Ou seja, sem o uso de mutex temos o erro já visto antes, onde há concorrencia entre os processos..
+
+
+
+
+Pense por um momento, aonde que há região crítica dentro deste bloco de código...
+
+Achou? isso mesmo, está justamente na **função run**, pois, temos como parte dela, o uso de uma variável global **nome** e **i**, que será usada por todos os processos que têm esta função..Adicionaremos agora o synchronized e veremos como ela se comporta no terminal..
+
+``` 
+
+public class ThreadBasica implements Runnable{
+    private String nome;
+    private int i=0;
+
+
+    @Override
+    public synchronized void run() {
+        i++;
+        nome = Thread.currentThread().getName();
+        System.out.println(nome+": "+ i);
+    }
+    
+}
+
+```
+
+Temos como saída:
+
+```
+
+Thread-0: 1
+Thread-2: 2
+Thread-1: 3
+
+```
+
+Por mais que o nome das threads estejam trocados, a varíavel **i** está em sequencia, pois o primeiro que entrar captura seu valor e a mostra na sequencia correta, indenpendente de qual thread a pegou, pois quem decide qual irá entrar em execução primeiro é o **escalonador**.
+
+<br></br>
+
+<h3 align="center">O uso mais correto de synchronized(em produção)</h3>
+
+Conseguimos então resolver o nosso problema, mas, será aquele método o mais correto? Não... Pensaremos o seguinte, a vantagem do uso de mais processos é justamente faze-las trabalharem juntas agilizando alguma função dentro de um programa, logo, ao inibirmos a entrada dos outros processos dentro da mesma função, acaba retirando esta vantagem e tornando inútil o uso de threads.
+
+Refinaremos agora o nosso uso de mutex dentro dos nóssos códigos, a partir do momento em que conseguimos identificar uma região crítica, devemos apenas bloquear a região crítica e não todo seu contorno...mas como assim? Faremos agora um bloco onde só ali poderá entrar um por vez, e toda sua região em volta ainda poderá entrar mais de uma thread, que farão outros serviços e etc..
+
+```
+
+public class ThreadBasica implements Runnable{
+    private String nome;
+    private int i=0;
+
+
+    @Override
+    public void run() {
+        synchronized(this){ // bloco mutex
+            i++;
+            nome = Thread.currentThread().getName();
+            System.out.println(nome+": "+ i);
+        }  
+    }
+    
+}
+
+```
+
+Agora, habilitamos as threads de entrarem dentro de sua área de execução (o run()) mas não entrarem juntas na região crítica, olhando apenas para um código simples podemos pensar que as duas formas farão o mesmo, mas não, pois agora podemos escrever mais códigos embaixo ou encima deste bloco e todas as threads trabalharão, enquanto a parte especifica é bloqueada, então deixamos de inibir o trabalho total das threads.
+
+</div>
+
+<div>
+<h2>
 </div>
 
 
