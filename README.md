@@ -8,13 +8,24 @@
 
 <div align="center">
 <br></br>
-<h2>Sumário</h2>
+<h2>Tópicos</h2>
 
-![Quem sou eu?](#quemsoueu)
+<p>Quem sou eu?</p>
+<p>Um breve conceito sobre escalonadores</p>
+<p>Threads</p>
+<p>Criando threads com java</p>
+<p>Condição de disputa</p>
+<p>Região Crítica</p>
+<p>Resolvendo os problemas de threads</p>
+<p>Condições para promover uma boa solução exclusão mútua</p>
+<p>Teoria do mutexes</p>
+<p>Mutex na prática(linguagem C)</p>
+<p>Utilizando mutex para resolver threads em Java</p>
+<p>Usando synchronized</p>
+<p>Synchronized em funções</p>
+<p>O uso mais correto de synchronized(em produção)</p>
+<p>Chegamos ao fim!</p>
 
-![Um breve conceito sobre escalonadores](#escalonadores)
-
-![Threads](#threads)
 
 </div>
 
@@ -469,10 +480,32 @@ public class ThreadBasica implements Runnable{
 
 Agora, habilitamos as threads de entrarem dentro de sua área de execução (o run()) mas não entrarem juntas na região crítica, olhando apenas para um código simples podemos pensar que as duas formas farão o mesmo, mas não, pois agora podemos escrever mais códigos embaixo ou encima deste bloco e todas as threads trabalharão, enquanto a parte especifica é bloqueada, então deixamos de inibir o trabalho total das threads.
 
+<div align="center">
+
+![sync](./images/syncronized.png)
+
+
+</div>
 </div>
 
 <div>
-<h2>
+<h2>Chegamos ao fim!</h2>
+
+Muito obrigado a você que leu até o fim, e meus parabêns!, chegar até aqui significa que você é alguêm motivado e que deseja saber mais sobre o mundo da computação e performance de código!!
+
+Estarei deixando algumas ideias de tópicos para ler mais sobre e evoluir no entendimento sobre sistemas operacionais:
+
+**Tópicos:**
+
+- Exclusão mútua com espera ocupada (Desabilitando interrupções, Variáveis do tipo Trava, Alternância explicita e Solução de Peterson). 
+
+- Exclusão mútua com espera ocupada (Instrução TSL/XCHG). Mutexes e Semáforos.
+
+- Criação de processos com fork e exec
+
+- Arquiteturas de Sistemas Operacionais
+
+
 </div>
 
 
