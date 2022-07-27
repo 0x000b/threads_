@@ -237,7 +237,6 @@ Para quem já conhece C e quer entender o funcionamento de uma forma mais comple
 
 ```
 
-///Produtor Consumidor Mutexes
 #include <stdio.h>
 #include <windows.h>
 #include <process.h>
@@ -300,7 +299,6 @@ void main(void)
 
 ```
 
-///Produtor Consumidor utilizando Mutexes
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
