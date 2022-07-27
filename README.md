@@ -67,9 +67,8 @@ De nada adianta falarmos de threads e seus pontos principais sem antes sabermos 
 
 <p align="left">Dado o grande avanço técnologico e a evolução de sistemas, tornou-se desejavel ter softwares que realizam mais ações ao mesmo tempo, de uma forma mais eficiente, trouxe a ideia de usar um processo dentro de outro, isto é, como se eles fossem processos separados, mas que compartilham o mesmo espaço de endereçamento.</p>
 
-![Threads](https://user-images.githubusercontent.com/77945215/180703230-ece0b2fa-2af6-4b20-9915-7bfedf6c0cb2.png)
+![Threads](./images/threads.png)
 
-(Foto extraída do treina web)
 
 <p align="left">Mas... como que ocorre isso? Bom, imagine comigo um programa que faça leitura de contas bancárias e calcula seus gastos, cobranças, saldo, etc. Contas são grandes, há muitos dados a serem lidos e calculados, como podemos fazer as duas coisas ao mesmo tempo? criaremos um processo neste programa, onde o processo pai(gerador da thread) lê os dados e cria a thread(processo filho) para realizar os calculos, agora temos alguém calculando e outro lendo, e podemos ainda otimizar mais, criando mais threads, porém como tudo nessa vida, há problemas, que falaremos jajá.</p>
 
@@ -155,8 +154,8 @@ Isto ocorre pois durante as suas execuções o escalonador está escolhendo quem
 Condição de disputa nada mais é que a ocorrência de dois ou mais processos que estão tentando executar uma mesma função de tal forma que elas podem ser retiradas pelo escalonador para dar espaço a outra, ou seja, estão constantemente concorrendo por espaço, querendo executar sua função, já que todas têm o mesmo objetivo..
 
 <div align="center">
-
-![disputa](./images/condicaodedisputa.jpg)
+ 
+![disputa](./images/condicaodedisputa.png)
 
 </div>
 
@@ -203,7 +202,6 @@ Todas as threads estarão neste mesmo local, trabalhando paralelamente e concorr
 
 Há diversas formas de resolver os problemas causados pelo uso de threads, feitos por autores diferentes, com formas high level(mais próximo da nossa linguagem) e low level(mais perto da linguagem de hardware), estas consistem na ideia de previnir com que dois processos/threads entrem na **região crítica** ao mesmo tempo, algumas tendo mais eficácia e outras menos...são chamadas de **técnicas de exclusão mutua**(sugiro pesquisar sobre as diversas técnicas existentes).
 
-<br></br>
 
 <h3 align="center">Condições para promover uma boa solução exclusão mútua</h3>
 
@@ -220,7 +218,9 @@ Mutex é uma das técnicas de exclusão mutua, que consiste na ideia de termos u
 
 <div align="center">
 
-![regiaocritica](./images/regioescriticas.jpg)
+![regiaocritica](./images/regioescriticas.png)
+
+(Foto extraída do livro Sistemas Operacionais Modernos 4°Ed. - Tanenbaum)
 
 </div>
 
@@ -372,12 +372,10 @@ void main(void)
 
 Abaixo veremos a principal forma de resolvermos nossos problemas com threads, primeiro demonstrarem algumas das formas que teremos, e depois a forma mais usual, geralmente mais adaptada ao uso em produção.
 
-<br></br>
 <h3 align="center">Usando synchronized</h3>
 
 Synchronized é a forma mais convencional de nos proteger dos males do multithreading em java, ela é bem simples, apenas adicione ela na parte do seu código onde exista **região crítica**.
 
-<br></br>
 <h3 align="center">Synchronized em funções</h3>
 
 Veremos agora o uso do mutex através de uma função, que, assim como dito, irá deixar a função bloqueada a partir do momento em que uma thread estiver dentro, logo, inibindo o erro de concorrencia. Usaremos para este exemplo o código feito no início do assunto e adicionaremos uma nova varíavel, i.
@@ -489,13 +487,13 @@ Agora, habilitamos as threads de entrarem dentro de sua área de execução (o r
 </div>
 
 <div>
-<h2>Chegamos ao fim!</h2>
+<h2 align="center">Chegamos ao fim!</h2>
 
 Muito obrigado a você que leu até o fim, e meus parabêns!, chegar até aqui significa que você é alguêm motivado e que deseja saber mais sobre o mundo da computação e performance de código!!
 
 Estarei deixando algumas ideias de tópicos para ler mais sobre e evoluir no entendimento sobre sistemas operacionais:
 
-**Tópicos:**
+**Tópicos sobre OS:**
 
 - Exclusão mútua com espera ocupada (Desabilitando interrupções, Variáveis do tipo Trava, Alternância explicita e Solução de Peterson). 
 
@@ -505,8 +503,11 @@ Estarei deixando algumas ideias de tópicos para ler mais sobre e evoluir no ent
 
 - Arquiteturas de Sistemas Operacionais
 
-
+**Tópicos relacionados com Java:**
+- locks (outra forma além do synchronized)
 </div>
+
+
 
 
 
