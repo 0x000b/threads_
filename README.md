@@ -33,10 +33,6 @@
 <div id="quemsoueu" align="center">
 <h2 align="center">Quem sou eu?</h2>
 
-
-![Foto de perfil](https://avatars.githubusercontent.com/u/77945215?v=4)
-
-
 <p align="left"> Olá, meu nome é Henrique Liberato, atualmente sou estudante de Ciências da Computação no Instituto Federal de São Paulo - Campus Presidente Epitácio, meu foco atual é estudar Java em direção a uma carreira de dev, como engenheiro de software ou backend, sempre busquei entender bem os conceitos de computação, e com este pequeno projetinho pretendo passar um pouco do que eu sei.</p>
 </div>
 
